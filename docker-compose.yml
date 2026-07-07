@@ -1,6 +1,5 @@
-version: "3.9"
-
 services:
+
   postgres:
     image: postgres:17
     container_name: compuroom-postgres
@@ -13,6 +12,36 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+
+  backend:
+    build:
+      context: ./backend
+    container_name: compuroom-backend
+    restart: always
+    environment:
+      PORT: 3000
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: compuroom
+      DB_PORT: 5432
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: compuroom-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
 
 volumes:
   postgres_data:
